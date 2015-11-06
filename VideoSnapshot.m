@@ -66,7 +66,7 @@ RCT_EXPORT_MODULE();
     return result;
 }
 
-RCT_EXPORT_METHOD(snapshot:(RCTResponseSenderBlock)callback withOptions:(NSDictionary*)options)
+RCT_EXPORT_METHOD(snapshot:(NSDictionary*)options withCallback:(RCTResponseSenderBlock)callback)
 {
     NSLog(@"In plugin. Options:%@", options);
     
@@ -119,6 +119,8 @@ RCT_EXPORT_METHOD(snapshot:(RCTResponseSenderBlock)callback withOptions:(NSDicti
     if (nstextSize != nil) {
         textSize = [nstextSize intValue];
     }
+    
+    
     
     NSURL* url = [NSURL fileURLWithPath:source];
     if (url == nil) {
@@ -184,13 +186,13 @@ RCT_EXPORT_METHOD(snapshot:(RCTResponseSenderBlock)callback withOptions:(NSDicti
     }];
 }
 
-- (void)success:(RCTResponseSenderBlock)callback withDictioanry:(NSDictionary*)ret
+- (void)success:(RCTResponseSenderBlock)callback withDictionary:(NSDictionary*)ret
 {
     NSLog(@"Plugin success. Result: %@", ret);
     callback(@[ret]);
 }
 
-- (void)fail:(RCTResponseSenderBlock)callback withDictioanry:(NSString*)message
+- (void)fail:(RCTResponseSenderBlock)callback withMessage:(NSString*)message
 {
     NSLog(@"Plugin failed. Error: %@", message);
     NSDictionary* ret = [NSDictionary dictionaryWithObjectsAndKeys:
