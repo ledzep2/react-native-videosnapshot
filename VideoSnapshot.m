@@ -80,12 +80,13 @@ RCT_EXPORT_METHOD(snapshot:(NSDictionary*)options withCallback:(RCTResponseSende
     int textSize = 48;
     bool timestamp = true;
     float quality = 0.9f;
-    NSString* prefix = @"";
     
     NSNumber* nscount = [options objectForKey:@"count"];
     NSNumber* nscountPerMinute = [options objectForKey:@"countPerMinute"];
     NSNumber* nstextSize = [options objectForKey:@"textSize"];
     NSString* source = [options objectForKey:@"source"];
+    NSString* nspathPrefix = [options objectForKey:@"pathPrefix"];
+    NSString* nsnamePrefix = [options objectForKey:@"namePrefix"];
     NSNumber* nstimestamp = [options objectForKey:@"timeStamp"];
     NSNumber* nsquality = [options objectForKey:@"quality"];
     NSString* nsprefix = [options objectForKey:@"prefix"];
@@ -112,8 +113,16 @@ RCT_EXPORT_METHOD(snapshot:(NSDictionary*)options withCallback:(RCTResponseSende
         quality = (float)[nsquality intValue] / 100;
     }
     
-    if (nsprefix != nil) {
-        prefix = nsprefix;
+    if (nspathPrefix == nil) {
+        nspathPrefix = @"";
+    }
+    
+    if (nsnamePrefix == nil) {
+        nsnamePrefix = @"";
+    }
+    
+    if (nsprefix == nil) {
+        nsprefix = @"";
     }
     
     if (nstextSize != nil) {
@@ -129,7 +138,13 @@ RCT_EXPORT_METHOD(snapshot:(NSDictionary*)options withCallback:(RCTResponseSende
     }
     
     NSString* filename = [url.lastPathComponent stringByReplacingOccurrencesOfString:@"." withString:@"_"];
-    NSString* tmppath = NSTemporaryDirectory();
+    NSString* tmppath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:nspathPrefix];
+    
+    NSFileManager *fileManager= [NSFileManager defaultManager];
+    if(![fileManager fileExistsAtPath:tmppath])
+        if(![fileManager createDirectoryAtPath:tmppath withIntermediateDirectories:YES attributes:nil error:NULL])
+            NSLog(@"Error: Create folder failed %@", tmppath);
+    
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:url options:nil];
     AVAssetImageGenerator *generate = [[AVAssetImageGenerator alloc] initWithAsset:asset];
     generate.appliesPreferredTrackTransform = true;
@@ -164,10 +179,10 @@ RCT_EXPORT_METHOD(snapshot:(NSDictionary*)options withCallback:(RCTResponseSende
         }
         
         int sec = (int)CMTimeGetSeconds(actualTime);
-        NSString* path = [tmppath stringByAppendingPathComponent: [NSString stringWithFormat:@"%@-snapshot%d.jpg", filename, sec]];
+        NSString* path = [tmppath stringByAppendingPathComponent: [NSString stringWithFormat:@"%@%@-%d.jpg", nsnamePrefix, filename, sec]];
         UIImage *uiImage = [UIImage imageWithCGImage:image];
         if (timestamp) {
-            uiImage = [self drawTimestamp:actualTime withPrefix:prefix ofSize:textSize toImage:uiImage];
+            uiImage = [self drawTimestamp:actualTime withPrefix:nsprefix ofSize:textSize toImage:uiImage];
         }
         
         NSData *jpgData = UIImageJPEGRepresentation(uiImage, quality);
