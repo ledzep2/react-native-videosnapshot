@@ -13,6 +13,9 @@ var NativeVideoSnapshot = require('NativeModules').VideoSnapshot;
 var VideoSnapshot = {
   snapshot: function(options, cb) {
     NativeVideoSnapshot.snapshot(cb, options);
+  },
+  snapshotAsnyc: function(options) {
+      NativeVideoSnapshot.snapshotAsync(options);
   }
 };
 

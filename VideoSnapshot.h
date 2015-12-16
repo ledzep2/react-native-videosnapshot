@@ -24,6 +24,7 @@
 @interface VideoSnapshot : NSObject <RCTBridgeModule>
 
 - (NSString *)applicationDocumentsDirectory;
+- (void)snapshotAsync:(NSDictionary*)options;
 - (void)snapshot:(NSDictionary*)options withCallback:(RCTResponseSenderBlock)callback;
 - (void)fail:(RCTResponseSenderBlock)callback withMessage:(NSString*)message;
 - (void)success:(RCTResponseSenderBlock)callback withDictionary:(NSDictionary*)ret;
