@@ -108,7 +108,7 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(snapshotAsync:(NSDictionary*)options)
 {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
         UIApplication __block *application = [UIApplication sharedApplication];
         UIBackgroundTaskIdentifier __block task = [application beginBackgroundTaskWithExpirationHandler:^{
             if (task != UIBackgroundTaskInvalid) {
@@ -144,7 +144,7 @@ RCT_EXPORT_METHOD(snapshot:(NSDictionary*)options withCallback:(RCTResponseSende
     int countPerMinute = 0;
     int textSize = 48;
     bool timestamp = true;
-    float quality = 0.9f;
+    float quality = 0.7f;
     
     NSNumber* nscount = [options objectForKey:@"count"];
     NSNumber* nscountPerMinute = [options objectForKey:@"countPerMinute"];
